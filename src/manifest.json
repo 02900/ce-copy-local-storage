@@ -1,0 +1,17 @@
+{
+    "name": "Great Extension",
+    "version": "1.0",
+    "description": "Build an Extension with Angular",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permissions": [
+        "scripting",
+        "downloads",
+        "debugger",
+        "storage",
+        "activeTab"
+      ],
+    "host_permissions": ["https://www.kavak.com/"]
+}
