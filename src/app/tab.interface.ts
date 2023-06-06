@@ -1,14 +1,14 @@
 export interface Tab {
-  id: number,
-  name: string,
-  url?: string,
+  id: number;
+  name: string;
+  url?: string;
 }
 
 export interface Dictionary {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export interface PairKeyValue {
-  key: string,
-  value: string,
+  key: string;
+  value: string;
 }

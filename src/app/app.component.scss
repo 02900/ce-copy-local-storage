@@ -1,12 +1,19 @@
-main{
-    min-width: 200px;
+main {
+  min-width: 200px;
 
-    fieldset{
-        max-height: 200px;
-        overflow: auto;
-    }
+  fieldset {
+    max-height: 200px;
+    overflow: auto;
+    margin-bottom: 1rem;
 
-    button {
-        display: block;
+    .checkbox {
+      display: flex;
+      align-items: center;
     }
+  }
+
+  button {
+    display: block;
+    margin: 0 auto;
+  }
 }
