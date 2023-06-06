@@ -1,33 +1,46 @@
 <main>
   <h1>Copy Local storage</h1>
 
-  <p>Source tab:</p>
-  <select
-    #HTMLsourceTab
-  (change)="setSourceTab(HTMLsourceTab.value)" >
-    <option disabled selected>none</option>
-    <option *ngFor="let tab of tabs; let i = index" [value]="i">
-      {{ tab.name | substring}}
-    </option>
-  </select>
+  <fieldset>
+    <label for="sourceTab">Source tab:</label>
+    <select
+      #HTMLsourceTab
+      id="sourceTab"
+      (change)="setSourceTab(HTMLsourceTab.value)"
+    >
+      <option disabled selected>none</option>
+      <option *ngFor="let tab of tabs; let i = index" [value]="i">
+        {{ tab.name | substring }}
+      </option>
+    </select>
+  </fieldset>
 
   <fieldset *ngIf="sourceTab">
     <legend>Target keys:</legend>
-    <div *ngFor="let item of sourceTabStorage">
-      <input type="checkbox" [id]="item.key" [name]="item.key" (change)="setTargetStorage(item)">
-      <label [for]="item.key">{{item.key}}</label>
+    <div *ngFor="let item of sourceTabStorage" class="checkbox">
+      <input
+        type="checkbox"
+        [id]="item.key"
+        [name]="item.key"
+        (change)="setTargetStorage(item)"
+      />
+      <label [for]="item.key">{{ item.key }}</label>
     </div>
   </fieldset>
 
-  <p>Target tab:</p>
-  <select
-    #HTMLtargetTab
-  (change)="setTargetTab(HTMLtargetTab.value)" >
-    <option disabled selected>none</option>
-    <option *ngFor="let tab of tabs; let i = index" [value]="i">
-      {{ tab.name | substring}}
-    </option>
-  </select>
+  <fieldset>
+    <label for="targetTab">Target tab:</label>
+    <select
+      id="targetTab"
+      #HTMLtargetTab
+      (change)="setTargetTab(HTMLtargetTab.value)"
+    >
+      <option disabled selected>none</option>
+      <option *ngFor="let tab of tabs; let i = index" [value]="i">
+        {{ tab.name | substring }}
+      </option>
+    </select>
+  </fieldset>
 
   <button (click)="sync()">Sync</button>
 </main>

@@ -5,7 +5,7 @@ import { Dictionary, PairKeyValue, Tab } from './tab.interface';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   title = 'ce-share-local-storage';
@@ -17,8 +17,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private readonly ceService: ChromeExtensionService,
-    private readonly cdr: ChangeDetectorRef,
-  ){}
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.ceService.init();
@@ -42,25 +42,23 @@ export class AppComponent implements OnInit {
     this.sourceTabStorage = [];
     this.targetTabStorage = {};
     if (!this.sourceTab) return;
-    this.ceService.getTabLocalStorage(this.sourceTab.id).subscribe((tabStorage) => {
-
-      for (let key in tabStorage) {
-        if (tabStorage.hasOwnProperty(key)) {
-            this.sourceTabStorage.push(
-              {
-                key,
-                value: tabStorage[key],
-              }
-            );
+    this.ceService
+      .getTabLocalStorage(this.sourceTab.id)
+      .subscribe((tabStorage) => {
+        for (let key in tabStorage) {
+          if (tabStorage.hasOwnProperty(key)) {
+            this.sourceTabStorage.push({
+              key,
+              value: tabStorage[key],
+            });
+          }
         }
-      }
-      this.cdr.detectChanges();
-    });
+        this.cdr.detectChanges();
+      });
   }
 
-  setTargetStorage(item:PairKeyValue) {
-    if (this.targetTabStorage[item.key])
-      delete this.targetTabStorage[item.key];
+  setTargetStorage(item: PairKeyValue) {
+    if (this.targetTabStorage[item.key]) delete this.targetTabStorage[item.key];
     else this.targetTabStorage[item.key] = item.value;
   }
 

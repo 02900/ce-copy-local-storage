@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import {
-  Observable, map,
-} from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Dictionary, Tab } from './tab.interface';
 
-function getLocalStorage(){
-  return  JSON.stringify(localStorage);
+function getLocalStorage() {
+  return JSON.stringify(localStorage);
 }
 
 function overrideLocalStorage(storage: string) {
@@ -20,7 +18,7 @@ function overrideLocalStorage(storage: string) {
 }
 
 export interface ITabID {
-  tabId: number
+  tabId: number;
 }
 
 @Injectable({
@@ -33,43 +31,48 @@ export class ChromeExtensionService {
 
   getTabs(): Observable<Tab[]> {
     return new Observable((observer) => {
-      chrome.tabs.query({ }, (tabs) => observer.next(tabs));
-    }).pipe(map((e) => {
-      let tabs: Tab[] = [];
-      
-      if (Array.isArray(e)) {
-        tabs = e.filter((item) => item?.title && item?.url)
-        .map((item) => {
-          return {
-            name: item.title,
-            id: item.id, 
-            url: item?.url
-          }
-        })
-      }
+      chrome.tabs.query({}, (tabs) => observer.next(tabs));
+    }).pipe(
+      map((e) => {
+        let tabs: Tab[] = [];
 
-      return tabs;
-    }));
+        if (Array.isArray(e)) {
+          tabs = e
+            .filter((item) => item?.title && item?.url)
+            .map((item) => {
+              return {
+                name: item.title,
+                id: item.id,
+                url: item?.url,
+              };
+            });
+        }
+
+        return tabs;
+      })
+    );
   }
 
-  getTabLocalStorage(tabId: number): Observable<Dictionary>{
+  getTabLocalStorage(tabId: number): Observable<Dictionary> {
     return new Observable((observer) => {
-      chrome.scripting.executeScript({
-          target: { tabId }, 
+      chrome.scripting.executeScript(
+        {
+          target: { tabId },
           func: getLocalStorage,
         },
         (injectionResults) => {
-            const results: Dictionary = JSON.parse(injectionResults[0].result);
-            observer.next(results);
-        });
+          const results: Dictionary = JSON.parse(injectionResults[0].result);
+          observer.next(results);
+        }
+      );
     });
   }
 
-  setTabLocalStorage(tabId:number, storage: Dictionary) {
-      chrome.scripting.executeScript({
-        target: { tabId }, 
-        func: overrideLocalStorage,
-        args: [JSON.stringify(storage)],
-      });
+  setTabLocalStorage(tabId: number, storage: Dictionary) {
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: overrideLocalStorage,
+      args: [JSON.stringify(storage)],
+    });
   }
 }

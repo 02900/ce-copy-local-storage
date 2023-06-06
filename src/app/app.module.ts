@@ -4,14 +4,9 @@ import { AppComponent } from './app.component';
 import { SubstringPipe } from './substring.pipe';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    SubstringPipe
-  ],
+  declarations: [AppComponent],
+  imports: [BrowserModule, SubstringPipe],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
