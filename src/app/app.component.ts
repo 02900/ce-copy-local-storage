@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ChromeExtensionService } from './chrome-extension.service';
-import { PairKeyValue, Tab } from './tab.interface';
+import { Dictionary, PairKeyValue, Tab } from './tab.interface';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
   sourceTab: Tab | undefined;
   targetTab: Tab | undefined;
   sourceTabStorage: PairKeyValue[] = [];
-  targetTabStorage: PairKeyValue[] = [];
+  targetTabStorage: Dictionary = {};
 
   constructor(
     private readonly ceService: ChromeExtensionService,
@@ -40,6 +40,7 @@ export class AppComponent implements OnInit {
 
   getTabStorage() {
     this.sourceTabStorage = [];
+    this.targetTabStorage = {};
     if (!this.sourceTab) return;
     this.ceService.getTabLocalStorage(this.sourceTab.id).subscribe((tabStorage) => {
 
@@ -57,7 +58,14 @@ export class AppComponent implements OnInit {
     });
   }
 
+  setTargetStorage(item:PairKeyValue) {
+    if (this.targetTabStorage[item.key])
+      delete this.targetTabStorage[item.key];
+    else this.targetTabStorage[item.key] = item.value;
+  }
+
   sync() {
-    // this.ceService.setToken();
+    if (!this.targetTab) return;
+    this.ceService.setTabLocalStorage(this.targetTab.id, this.targetTabStorage);
   }
 }
