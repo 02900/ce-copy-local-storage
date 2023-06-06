@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   Observable, map,
 } from 'rxjs';
@@ -26,22 +26,12 @@ export interface ITabID {
 @Injectable({
   providedIn: 'root',
 })
-export class ChromeExtensionService implements OnDestroy {
-  private tabId!: ITabID;
-
-  ngOnDestroy(): void {
-    this.detach();
-  }
-
-  detach() {
-    chrome.debugger.detach(this.tabId);
-  }
-
+export class ChromeExtensionService {
   init(): void {
     chrome.runtime.connect({ name: 'popup' });
   }
 
-  public getTabs(): Observable<Tab[]> {
+  getTabs(): Observable<Tab[]> {
     return new Observable((observer) => {
       chrome.tabs.query({ }, (tabs) => observer.next(tabs));
     }).pipe(map((e) => {
@@ -64,10 +54,8 @@ export class ChromeExtensionService implements OnDestroy {
 
   getTabLocalStorage(tabId: number): Observable<Dictionary>{
     return new Observable((observer) => {
-      this.tabId = { tabId };
-      
       chrome.scripting.executeScript({
-          target: this.tabId, 
+          target: { tabId }, 
           func: getLocalStorage,
         },
         (injectionResults) => {
@@ -77,15 +65,11 @@ export class ChromeExtensionService implements OnDestroy {
     });
   }
 
-  // setTokens(storage: Dictionary) {
-  //   this.getOlimpoDevLocalStorage('drago').subscribe((id) => {
-  //     this.tabId = { tabId: id };
-
-  //     chrome.scripting.executeScript({
-  //       target: this.tabId, // you can get the Tab id using chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {});
-  //           func: overrideLocalStorage,
-  //           args: [JSON.stringify(storage)],
-  //       });
-  //   });
-  // }
+  setTabLocalStorage(tabId:number, storage: Dictionary) {
+      chrome.scripting.executeScript({
+        target: { tabId }, 
+        func: overrideLocalStorage,
+        args: [JSON.stringify(storage)],
+      });
+  }
 }
