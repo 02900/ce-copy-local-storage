@@ -1,7 +1,7 @@
 <main>
-  <h1>Share Local storage</h1>
+  <h1>Copy Local storage</h1>
 
-  <p>Select a tab</p>
+  <p>Source tab:</p>
   <select
     #HTMLsourceTab
   (change)="setSourceTab(HTMLsourceTab.value)" >
@@ -13,14 +13,12 @@
 
   <div *ngIf="sourceTab" class="">
     <p>Select the keys to copy</p>
-    <div class="">
-      <p>key1</p>
-      <p>key2</p>
-      <p>key3</p>
+    <div *ngFor="let storage of sourceTabStorage" class="">
+      <p>{{ storage.key }}</p>
     </div>
   </div>
 
-  <p>Select the target tab</p>
+  <p>Target tab:</p>
   <select
     #HTMLtargetTab
   (change)="setTargetTab(HTMLtargetTab.value)" >
