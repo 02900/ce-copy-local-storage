@@ -1,7 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import {
-  Observable,
+  Observable, map,
 } from 'rxjs';
+import { Tab } from './tab.interface';
 
 function getLocalStorage(){
   return  JSON.stringify(localStorage);
@@ -34,9 +35,30 @@ export class ChromeExtensionService implements OnDestroy {
     chrome.runtime.connect({ name: 'popup' });
   }
 
+  public getTabs(): Observable<Tab[]> {
+    return new Observable((observer) => {
+      chrome.tabs.query({ }, (tabs) => observer.next(tabs));
+    }).pipe(map((e) => {
+      let tabs: Tab[] = [];
+      
+      if (Array.isArray(e)) {
+        tabs = e.filter((item) => item?.title && item?.url)
+        .map((item) => {
+          return {
+            name: item.title,
+            id: item.id, 
+            url: item?.url
+          }
+        })
+      }
+
+      return tabs;
+    }));
+  }
+
   getToken(): Observable<any>{
     return new Observable((observer) => {
-      this.GetOlimpoDevLocalStorage('olimpo').subscribe((id) => {
+      this.getOlimpoDevLocalStorage('olimpo').subscribe((id) => {
         this.tabId = { tabId: id };
         console.log(id);
   
@@ -54,7 +76,7 @@ export class ChromeExtensionService implements OnDestroy {
   }
 
   setToken() {
-    this.GetOlimpoDevLocalStorage('drago').subscribe((id) => {
+    this.getOlimpoDevLocalStorage('drago').subscribe((id) => {
       this.tabId = { tabId: id };
 
       alert(id + "AA");
@@ -67,7 +89,7 @@ export class ChromeExtensionService implements OnDestroy {
     });
   }
 
-  private GetOlimpoDevLocalStorage(target: string): Observable<number> {
+  private getOlimpoDevLocalStorage(target: string): Observable<number> {
     return new Observable((observer) => {
       const urlOlimpo = 'https://www.olimpo-web.dev.kavak.services/mx/*';
       const urlDrago = 'https://my-future-car-ui.dev.kavak.io/mx/*';
@@ -76,4 +98,6 @@ export class ChromeExtensionService implements OnDestroy {
       chrome.tabs.query({ url }, (tabs) => observer.next(tabs[0].id));
     });
   }
+
+
 }
