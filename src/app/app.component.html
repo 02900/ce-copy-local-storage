@@ -1,7 +1,34 @@
 <main>
   <h1>Share Local storage</h1>
-  <p></p>
 
-  <button (click)="getToken()">Transfer Local Storage Token</button>
-  <button (click)="setToken()">Set Cognito Token</button>
+  <p>Select a tab</p>
+  <select
+    #HTMLsourceTab
+  (change)="setSourceTab(HTMLsourceTab.value)" >
+    <option disabled selected>none</option>
+    <option *ngFor="let tab of tabs; let i = index" [value]="i">
+      {{ tab.name | substring}}
+    </option>
+  </select>
+
+  <div *ngIf="sourceTab" class="">
+    <p>Select the keys to copy</p>
+    <div class="">
+      <p>key1</p>
+      <p>key2</p>
+      <p>key3</p>
+    </div>
+  </div>
+
+  <p>Select the target tab</p>
+  <select
+    #HTMLtargetTab
+  (change)="setTargetTab(HTMLtargetTab.value)" >
+    <option disabled selected>none</option>
+    <option *ngFor="let tab of tabs; let i = index" [value]="i">
+      {{ tab.name | substring}}
+    </option>
+  </select>
+
+  <button (click)="sync()">Sync</button>
 </main>
