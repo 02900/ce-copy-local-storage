@@ -13,5 +13,5 @@
         "storage",
         "activeTab"
       ],
-    "host_permissions": ["https://www.kavak.com/"]
+    "host_permissions": ["https://www.olimpo-web.dev.kavak.services/"]
 }
