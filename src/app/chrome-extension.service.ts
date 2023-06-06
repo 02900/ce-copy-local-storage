@@ -7,6 +7,10 @@ function getLocalStorage(){
   return  JSON.stringify(localStorage);
 }
 
+function setValue(token: string) {
+  localStorage.setItem('olimpo_v2_userCognito', token);
+}
+
 export interface ITabID {
   tabId: number
 }
@@ -16,6 +20,7 @@ export interface ITabID {
 })
 export class ChromeExtensionService implements OnDestroy {
   private tabId!: ITabID;
+  private lastCognitoToken :string = '';
 
   ngOnDestroy(): void {
     this.detach();
@@ -27,25 +32,48 @@ export class ChromeExtensionService implements OnDestroy {
 
   init(): void {
     chrome.runtime.connect({ name: 'popup' });
+  }
 
-    const DEBUGGING_PROTOCOL_VERSION = '1.0';
-    this.currentTab().subscribe((id) => {
+  getToken(): Observable<any>{
+    return new Observable((observer) => {
+      this.GetOlimpoDevLocalStorage('olimpo').subscribe((id) => {
+        this.tabId = { tabId: id };
+        console.log(id);
+  
+        chrome.scripting.executeScript({
+          target: this.tabId, // you can get the Tab id using chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {});
+              func: getLocalStorage,
+          },
+          (injectionResults) => {
+              const results: any = JSON.parse(injectionResults[0].result);
+              this.lastCognitoToken = results['olimpo_v2_userCognito'];
+              observer.next(results);
+          });
+      });
+    })
+  }
+
+  setToken() {
+    this.GetOlimpoDevLocalStorage('drago').subscribe((id) => {
       this.tabId = { tabId: id };
-      chrome.debugger.attach(this.tabId, DEBUGGING_PROTOCOL_VERSION);
+
+      alert(id + "AA");
 
       chrome.scripting.executeScript({
         target: this.tabId, // you can get the Tab id using chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {});
-            func: getLocalStorage,
-        },
-        (injectionResults) => {
-            console.log('storage response: ', injectionResults[0].result); 
+            func: setValue,
+            args: [this.lastCognitoToken],
         });
     });
   }
 
-  private currentTab(): Observable<number> {
+  private GetOlimpoDevLocalStorage(target: string): Observable<number> {
     return new Observable((observer) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => observer.next(tabs[0].id));
+      const urlOlimpo = 'https://www.olimpo-web.dev.kavak.services/mx/*';
+      const urlDrago = 'https://my-future-car-ui.dev.kavak.io/mx/*';
+      const urlLocal = 'http://localhost:4200/*';
+      const url = target === 'olimpo' ? urlOlimpo : urlLocal;
+      chrome.tabs.query({ url }, (tabs) => observer.next(tabs[0].id));
     });
   }
 }

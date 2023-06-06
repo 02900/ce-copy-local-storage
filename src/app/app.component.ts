@@ -14,4 +14,14 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.ceService.init();
   }
+
+  getToken() {
+    this.ceService.getToken().subscribe((tokens) => {
+      console.log(tokens["olimpo_v2_userCognito"]);
+    });
+  }
+
+  setToken() {
+    this.ceService.setToken();
+  }
 }
