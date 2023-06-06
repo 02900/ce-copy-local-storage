@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ChromeExtensionService } from './chrome-extension.service';
-import { Tab } from './tab.interface';
+import { PairKeyValue, Tab } from './tab.interface';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +12,13 @@ export class AppComponent implements OnInit {
   tabs: Tab[] = [];
   sourceTab: Tab | undefined;
   targetTab: Tab | undefined;
+  sourceTabStorage: PairKeyValue[] = [];
+  targetTabStorage: PairKeyValue[] = [];
 
-  constructor(private readonly ceService: ChromeExtensionService,
-    private readonly cdr: ChangeDetectorRef){}
+  constructor(
+    private readonly ceService: ChromeExtensionService,
+    private readonly cdr: ChangeDetectorRef,
+  ){}
 
   ngOnInit() {
     this.ceService.init();
@@ -26,7 +30,7 @@ export class AppComponent implements OnInit {
 
   setSourceTab(tabIndex: string) {
     this.sourceTab = this.tabs[+tabIndex];
-    this.cdr.detectChanges();
+    this.getTabStorage();
   }
 
   setTargetTab(tabIndex: string) {
@@ -34,11 +38,26 @@ export class AppComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  sync() {
-    this.ceService.getToken().subscribe((tokens) => {
-      console.log(tokens["olimpo_v2_userCognito"]);
-    });
+  getTabStorage() {
+    this.sourceTabStorage = [];
+    if (!this.sourceTab) return;
+    this.ceService.getTabLocalStorage(this.sourceTab.id).subscribe((tabStorage) => {
 
-    this.ceService.setToken();
+      for (let key in tabStorage) {
+        if (tabStorage.hasOwnProperty(key)) {
+            this.sourceTabStorage.push(
+              {
+                key,
+                value: tabStorage[key],
+              }
+            );
+        }
+      }
+      this.cdr.detectChanges();
+    });
+  }
+
+  sync() {
+    // this.ceService.setToken();
   }
 }
