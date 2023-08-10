@@ -2,7 +2,9 @@
   <h1>Transfer Local storage</h1>
 
   <fieldset>
-    <label for="sourceTab">Source tab:</label>
+    <label for="sourceTab">
+      Source tab: <b>{{ sourceTab?.url | urlBase }}</b>
+    </label>
     <select
       #HTMLsourceTab
       id="sourceTab"
@@ -10,26 +12,28 @@
     >
       <option disabled selected>none</option>
       <option *ngFor="let tab of tabs; let i = index" [value]="i">
-        {{ tab.name | substring }}
+        {{ i }}. {{ tab.name | substring }} - {{ tab.url | urlBase }}
       </option>
     </select>
-  </fieldset>
 
-  <fieldset *ngIf="sourceTab">
-    <legend>Target keys:</legend>
-    <div *ngFor="let item of sourceTabStorage" class="checkbox">
-      <input
-        type="checkbox"
-        [id]="item.key"
-        [name]="item.key"
-        (change)="setTargetStorage(item)"
-      />
-      <label [for]="item.key">{{ item.key }}</label>
-    </div>
+    <fieldset id="local-storage-keys" *ngIf="sourceTab">
+      <legend>Target keys:</legend>
+      <div *ngFor="let item of sourceTabStorage" class="checkbox">
+        <input
+          type="checkbox"
+          [id]="item.key"
+          [name]="item.key"
+          (change)="setTargetStorage(item)"
+        />
+        <label [for]="item.key">{{ item.key }}</label>
+      </div>
+    </fieldset>
   </fieldset>
 
   <fieldset>
-    <label for="targetTab">Target tab:</label>
+    <label for="targetTab">
+      Target tab: <b>{{ targetTab?.url | urlBase }}</b>
+    </label>
     <select
       id="targetTab"
       #HTMLtargetTab
@@ -37,7 +41,7 @@
     >
       <option disabled selected>none</option>
       <option *ngFor="let tab of tabs; let i = index" [value]="i">
-        {{ tab.name | substring }}
+        {{ i }}. {{ tab.name | substring }} - {{ tab.url | urlBase }}
       </option>
     </select>
   </fieldset>

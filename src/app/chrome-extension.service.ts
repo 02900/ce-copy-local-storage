@@ -31,14 +31,14 @@ export class ChromeExtensionService {
 
   getTabs(): Observable<Tab[]> {
     return new Observable((observer) => {
-      chrome.tabs.query({}, (tabs) => observer.next(tabs));
+      chrome.tabs.query({ currentWindow: true }, (tabs) => observer.next(tabs));
     }).pipe(
       map((e) => {
         let tabs: Tab[] = [];
+        console.log(e);
 
         if (Array.isArray(e)) {
           tabs = e
-            .filter((item) => item?.title && item?.url)
             .map((item) => {
               return {
                 name: item.title,
