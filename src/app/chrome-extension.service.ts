@@ -31,7 +31,7 @@ export class ChromeExtensionService {
 
   getTabs(): Observable<Tab[]> {
     return new Observable((observer) => {
-      chrome.tabs.query({ currentWindow: true }, (tabs) => observer.next(tabs));
+      chrome.tabs.query({}, (tabs) => observer.next(tabs));
     }).pipe(
       map((e) => {
         let tabs: Tab[] = [];
