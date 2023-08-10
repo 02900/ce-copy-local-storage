@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-const maxLength = 80;
+const maxLength = 20;
 @Pipe({
   name: 'substring',
   standalone: true,

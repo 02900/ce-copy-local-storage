@@ -2,13 +2,16 @@ main {
   min-width: 200px;
 
   fieldset {
-    max-height: 200px;
-    overflow: auto;
     margin-bottom: 1rem;
 
-    .checkbox {
-      display: flex;
-      align-items: center;
+    #local-storage-keys {
+      max-height: 100px;
+      overflow: auto;
+
+      .checkbox {
+        display: flex;
+        align-items: center;
+      }
     }
   }
 
