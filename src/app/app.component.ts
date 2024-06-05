@@ -14,6 +14,8 @@ export class AppComponent implements OnInit {
   targetTab: Tab | undefined;
   sourceTabStorage: PairKeyValue[] = [];
   targetTabStorage: Dictionary = {};
+  sourceTabCookies: chrome.cookies.Cookie[] = [];
+  targetCookies: chrome.cookies.Cookie[] = [];
 
   constructor(
     private readonly ceService: ChromeExtensionService,
@@ -28,13 +30,13 @@ export class AppComponent implements OnInit {
     });
   }
 
-  setSourceTab(tabIndex: string) {
-    this.sourceTab = this.tabs[+tabIndex];
-    this.getTabStorage();
+  setSourceTab(index: number) {
+    this.sourceTab = this.tabs[index];
+    this.loadSourceTabCookies();
   }
 
-  setTargetTab(tabIndex: string) {
-    this.targetTab = this.tabs[+tabIndex];
+  setTargetTab(index: number) {
+    this.targetTab = this.tabs[index];
     this.cdr.detectChanges();
   }
 
@@ -62,8 +64,30 @@ export class AppComponent implements OnInit {
     else this.targetTabStorage[item.key] = item.value;
   }
 
-  sync() {
-    if (!this.targetTab) return;
-    this.ceService.setTabLocalStorage(this.targetTab.id, this.targetTabStorage);
+  async loadSourceTabCookies() {
+    if (this.sourceTab) {
+      this.sourceTabCookies = await this.ceService.getCookies(this.sourceTab);
+    }
+  }
+
+  setTargetCookie(cookie: chrome.cookies.Cookie) {
+    const index = this.targetCookies.findIndex((c) => c.name === cookie.name);
+    if (index !== -1) {
+      this.targetCookies.splice(index, 1);
+    } else {
+      this.targetCookies.push(cookie);
+    }
+  }
+
+  async sync() {
+    if (this.sourceTab && this.targetTab) {
+      this.ceService.setTabLocalStorage(
+        this.targetTab.id,
+        this.targetTabStorage
+      );      await this.ceService.setCookies(
+        this.targetTab,
+        this.targetCookies
+      );
+    }
   }
 }

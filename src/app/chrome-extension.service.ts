@@ -38,14 +38,13 @@ export class ChromeExtensionService {
         console.log(e);
 
         if (Array.isArray(e)) {
-          tabs = e
-            .map((item) => {
-              return {
-                name: item.title,
-                id: item.id,
-                url: item?.url,
-              };
-            });
+          tabs = e.map((item) => {
+            return {
+              name: item.title,
+              id: item.id,
+              url: item?.url,
+            };
+          });
         }
 
         return tabs;
@@ -73,6 +72,52 @@ export class ChromeExtensionService {
       target: { tabId },
       func: overrideLocalStorage,
       args: [JSON.stringify(storage)],
+    });
+  }
+
+  // Method to get cookies for a specific tab
+  getCookies(tab: Tab): Promise<chrome.cookies.Cookie[]> {
+    return new Promise((resolve, reject) => {
+      chrome.cookies.getAll({ url: tab.url }, (cookies) => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve(cookies);
+        }
+      });
+    });
+  }
+
+  // Method to set cookies for a specific tab
+  setCookies(tab: Tab, cookies: chrome.cookies.Cookie[]): Promise<void> {
+
+
+    return new Promise((resolve, reject) => {
+      const url = new URL(tab.url ?? '');
+      const domain = url.hostname;
+      console.log("domain", domain)
+      cookies.forEach((cookie) => {
+        const { name, value, path, secure, httpOnly, expirationDate, sameSite } = cookie;
+        chrome.cookies.set(
+          {
+            url: tab.url ?? '',
+            name,
+            value,
+            domain,
+            path,
+            secure,
+            httpOnly,
+            expirationDate,
+            sameSite,
+          },
+          () => {
+            if (chrome.runtime.lastError) {
+              reject(chrome.runtime.lastError);
+            }
+          }
+        );
+      });
+      resolve();
     });
   }
 }

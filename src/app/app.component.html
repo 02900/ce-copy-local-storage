@@ -1,5 +1,5 @@
 <main>
-  <h1>Transfer Local storage</h1>
+  <h1>Transfer Local storage and Cookies</h1>
 
   <fieldset>
     <label for="sourceTab">
@@ -8,7 +8,7 @@
     <select
       #HTMLsourceTab
       id="sourceTab"
-      (change)="setSourceTab(HTMLsourceTab.value)"
+      (change)="setSourceTab(+HTMLsourceTab.value)"
     >
       <option disabled selected>none</option>
       <option *ngFor="let tab of tabs; let i = index" [value]="i">
@@ -17,7 +17,7 @@
     </select>
 
     <fieldset id="local-storage-keys" *ngIf="sourceTab">
-      <legend>Target keys:</legend>
+      <legend>Target local storage keys:</legend>
       <div *ngFor="let item of sourceTabStorage" class="checkbox">
         <input
           type="checkbox"
@@ -26,6 +26,19 @@
           (change)="setTargetStorage(item)"
         />
         <label [for]="item.key">{{ item.key }}</label>
+      </div>
+    </fieldset>
+
+    <fieldset id="cookies" *ngIf="sourceTab">
+      <legend>Target cookies:</legend>
+      <div *ngFor="let cookie of sourceTabCookies" class="checkbox">
+        <input
+          type="checkbox"
+          [id]="cookie.name"
+          [name]="cookie.name"
+          (change)="setTargetCookie(cookie)"
+        />
+        <label [for]="cookie.name">{{ cookie.name }}</label>
       </div>
     </fieldset>
   </fieldset>
@@ -37,7 +50,7 @@
     <select
       id="targetTab"
       #HTMLtargetTab
-      (change)="setTargetTab(HTMLtargetTab.value)"
+      (change)="setTargetTab(+HTMLtargetTab.value)"
     >
       <option disabled selected>none</option>
       <option *ngFor="let tab of tabs; let i = index" [value]="i">
