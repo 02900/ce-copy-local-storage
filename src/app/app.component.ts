@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
 
   setSourceTab(index: number) {
     this.sourceTab = this.tabs[index];
+    this.getTabStorage()
     this.loadSourceTabCookies();
   }
 
