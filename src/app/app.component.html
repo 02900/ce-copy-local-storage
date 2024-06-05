@@ -59,5 +59,17 @@
     </select>
   </fieldset>
 
+  <fieldset>
+    <label for="newUrl">Target URL: </label>
+    <input
+      type="text"
+      id="newUrl"
+      [value]="targetUrl"
+      (change)="updateUrl($event)"
+      placeholder="Enter the URL"
+    />
+  </fieldset>
+
   <button (click)="sync()">Sync</button>
+  <button (click)="transferToNewUrl()">Open URL with Transfer</button>
 </main>
