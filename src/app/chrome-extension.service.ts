@@ -10,8 +10,6 @@ function overrideLocalStorage(storage: string) {
   const decodedStorage = JSON.parse(storage) as Dictionary;
   for (let key in decodedStorage) {
     if (decodedStorage.hasOwnProperty(key)) {
-      console.log('Key:', key);
-      console.log('Value:', decodedStorage[key]);
       localStorage.setItem(key, decodedStorage[key]);
     }
   }
@@ -89,18 +87,22 @@ export class ChromeExtensionService {
   }
 
   // Method to set cookies for a specific tab
-  setCookies(tab: Tab, cookies: chrome.cookies.Cookie[]): Promise<void> {
-
-
+  setCookies(url: string, cookies: chrome.cookies.Cookie[]): Promise<void> {
     return new Promise((resolve, reject) => {
-      const url = new URL(tab.url ?? '');
-      const domain = url.hostname;
-      console.log("domain", domain)
+      const domain = new URL(url).hostname;
       cookies.forEach((cookie) => {
-        const { name, value, path, secure, httpOnly, expirationDate, sameSite } = cookie;
+        const {
+          name,
+          value,
+          path,
+          secure,
+          httpOnly,
+          expirationDate,
+          sameSite,
+        } = cookie;
         chrome.cookies.set(
           {
-            url: tab.url ?? '',
+            url,
             name,
             value,
             domain,
@@ -119,5 +121,20 @@ export class ChromeExtensionService {
       });
       resolve();
     });
+  }
+
+  async transferCookies(
+    sourceTab: Tab | undefined,
+    targetUrl: string
+  ): Promise<void> {
+    if (!sourceTab) return;
+    const sourceCookies = await this.getCookies(sourceTab);
+    await this.setCookies(targetUrl, sourceCookies);
+  }
+
+  async getCurrentTab() {
+    let queryOptions = { active: true, lastFocusedWindow: true };
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
   }
 }

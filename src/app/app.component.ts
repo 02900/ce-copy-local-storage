@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   targetTabStorage: Dictionary = {};
   sourceTabCookies: chrome.cookies.Cookie[] = [];
   targetCookies: chrome.cookies.Cookie[] = [];
+  targetUrl: string = '';
 
   constructor(
     private readonly ceService: ChromeExtensionService,
@@ -30,9 +31,14 @@ export class AppComponent implements OnInit {
     });
   }
 
+  updateUrl(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.targetUrl = input.value;
+  }
+
   setSourceTab(index: number) {
     this.sourceTab = this.tabs[index];
-    this.getTabStorage()
+    this.getTabStorage();
     this.loadSourceTabCookies();
   }
 
@@ -85,10 +91,27 @@ export class AppComponent implements OnInit {
       this.ceService.setTabLocalStorage(
         this.targetTab.id,
         this.targetTabStorage
-      );      await this.ceService.setCookies(
-        this.targetTab,
-        this.targetCookies
       );
+      await this.ceService.setCookies(this.targetTab?.url ?? '', this.targetCookies);
+    }
+  }
+
+  async transferToNewUrl() {
+    if (this.targetUrl) {
+      const currentTab = await this.ceService.getCurrentTab();
+      if (!currentTab) return;
+
+      const sourceTab: Tab = {
+        url: currentTab.url,
+        id: currentTab.id ?? -2,
+        name: currentTab.title ?? 'No name',
+      };
+      const newTab: Tab = { url: this.targetUrl, id: -1, name: '' };
+      await this.ceService.transferCookies(sourceTab, this.targetUrl);
+
+      chrome.tabs.create({ url: this.targetUrl }, (tab) => {
+        newTab.id = tab.id ?? -1;
+      });
     }
   }
 }
