@@ -1,75 +1,84 @@
 <main>
   <h1>Transfer Local storage and Cookies</h1>
 
-  <fieldset>
-    <label for="sourceTab">
-      Source tab: <b>{{ sourceTab?.url | urlBase }}</b>
-    </label>
-    <select
-      #HTMLsourceTab
-      id="sourceTab"
-      (change)="setSourceTab(+HTMLsourceTab.value)"
-    >
-      <option disabled selected>none</option>
-      <option *ngFor="let tab of tabs; let i = index" [value]="i">
-        {{ i }}. {{ tab.name | substring }} - {{ tab.url | urlBase }}
-      </option>
-    </select>
+  <div class="mb-4">
+    <fieldset>
+      <legend>Target URL:</legend>
+      <input
+        style="width: 100%"
+        type="text"
+        id="newUrl"
+        [value]="targetUrl"
+        (change)="updateUrl($event)"
+        placeholder="Enter the URL"
+      />
 
-    <fieldset id="local-storage-keys" *ngIf="sourceTab">
-      <legend>Target local storage keys:</legend>
-      <div *ngFor="let item of sourceTabStorage" class="checkbox">
-        <input
-          type="checkbox"
-          [id]="item.key"
-          [name]="item.key"
-          (change)="setTargetStorage(item)"
-        />
-        <label [for]="item.key">{{ item.key }}</label>
-      </div>
+      <button (click)="transferToNewUrl()">Transfer cookies from current URL</button>
+    </fieldset>
+  </div>
+
+  <fieldset>
+    <legend>Selective Transfer</legend>
+    <fieldset>
+      <legend>
+        Source tab: <b>{{ sourceTab?.url | urlBase }}</b>
+      </legend>
+
+      <select
+        #HTMLsourceTab
+        id="sourceTab"
+        (change)="setSourceTab(+HTMLsourceTab.value)"
+      >
+        <option disabled selected>none</option>
+        <option *ngFor="let tab of tabs; let i = index" [value]="i">
+          {{ i }}. {{ tab.name | substring }} - {{ tab.url | urlBase }}
+        </option>
+      </select>
+
+      <fieldset class="keys" *ngIf="sourceTab">
+        <legend>Select local storage keys:</legend>
+        <div *ngFor="let item of sourceTabStorage" class="checkbox">
+          <input
+            type="checkbox"
+            [id]="item.key"
+            [name]="item.key"
+            (change)="setTargetStorage(item)"
+          />
+          <label [for]="item.key">{{ item.key }}</label>
+        </div>
+      </fieldset>
+
+      <fieldset class="keys" *ngIf="sourceTab">
+        <legend>Select cookies:</legend>
+        <div *ngFor="let cookie of sourceTabCookies" class="checkbox">
+          <input
+            type="checkbox"
+            [id]="cookie.name"
+            [name]="cookie.name"
+            (change)="setTargetCookie(cookie)"
+          />
+          <label [for]="cookie.name">{{ cookie.name }}</label>
+        </div>
+      </fieldset>
     </fieldset>
 
-    <fieldset id="cookies" *ngIf="sourceTab">
-      <legend>Target cookies:</legend>
-      <div *ngFor="let cookie of sourceTabCookies" class="checkbox">
-        <input
-          type="checkbox"
-          [id]="cookie.name"
-          [name]="cookie.name"
-          (change)="setTargetCookie(cookie)"
-        />
-        <label [for]="cookie.name">{{ cookie.name }}</label>
-      </div>
+    <fieldset>
+      <legend>
+        Target tab: <b>{{ targetTab?.url | urlBase }}</b>
+      </legend>
+
+      <select
+        id="targetTab"
+        #HTMLtargetTab
+        (change)="setTargetTab(+HTMLtargetTab.value)"
+      >
+        <option disabled selected>none</option>
+        <option *ngFor="let tab of tabs; let i = index" [value]="i">
+          {{ i }}. {{ tab.name | substring }} - {{ tab.url | urlBase }}
+        </option>
+      </select>
     </fieldset>
-  </fieldset>
 
-  <fieldset>
-    <label for="targetTab">
-      Target tab: <b>{{ targetTab?.url | urlBase }}</b>
-    </label>
-    <select
-      id="targetTab"
-      #HTMLtargetTab
-      (change)="setTargetTab(+HTMLtargetTab.value)"
-    >
-      <option disabled selected>none</option>
-      <option *ngFor="let tab of tabs; let i = index" [value]="i">
-        {{ i }}. {{ tab.name | substring }} - {{ tab.url | urlBase }}
-      </option>
-    </select>
+    <button (click)="sync()">Sync</button>
   </fieldset>
-
-  <fieldset>
-    <label for="newUrl">Target URL: </label>
-    <input
-      type="text"
-      id="newUrl"
-      [value]="targetUrl"
-      (change)="updateUrl($event)"
-      placeholder="Enter the URL"
-    />
-  </fieldset>
-
-  <button (click)="sync()">Sync</button>
-  <button (click)="transferToNewUrl()">Open URL with Transfer</button>
 </main>

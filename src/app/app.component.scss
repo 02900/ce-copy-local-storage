@@ -2,21 +2,33 @@ main {
   min-width: 200px;
 
   fieldset {
-    margin-bottom: 1rem;
-
-    #local-storage-keys {
+    .keys {
       max-height: 100px;
-      overflow: auto;
+      overflow-y: auto;
 
       .checkbox {
         display: flex;
         align-items: center;
+
+        label {
+          max-width: 200px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
       }
     }
   }
 
   button {
     display: block;
-    margin: 0 auto;
   }
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.ml-auto {
+  margin-left: auto;
 }
