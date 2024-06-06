@@ -29,11 +29,14 @@ export class AppComponent implements OnInit {
       this.tabs = e;
       this.cdr.detectChanges();
     });
+
+    this.loadSavedUrl();
   }
 
   updateUrl(event: Event) {
     const input = event.target as HTMLInputElement;
     this.targetUrl = input.value;
+    localStorage.setItem('savedUrl', this.targetUrl);
   }
 
   setSourceTab(index: number) {
@@ -112,6 +115,13 @@ export class AppComponent implements OnInit {
       chrome.tabs.create({ url: this.targetUrl }, (tab) => {
         newTab.id = tab.id ?? -1;
       });
+    }
+  }
+
+  private loadSavedUrl() {
+    const savedUrl = localStorage.getItem('savedUrl');
+    if (savedUrl) {
+      this.targetUrl = savedUrl;
     }
   }
 }
