@@ -1,7 +1,7 @@
 {
-  "name": "Transfer Local Storage",
+  "name": "Transfer local storage and cookies BETA",
   "version": "1.0",
-  "description": "Select tab local storage values and transfer to another one",
+  "description": "THIS EXTENSION IS FOR BETA TESTING. Manage you local storage and cookies with a simple interface. Copy and paste value easily.",
   "manifest_version": 3,
   "action": {
     "default_popup": "index.html"
